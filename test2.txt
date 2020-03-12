@@ -1,0 +1,4 @@
+int main(void)
+begin
+x = 10;
+end

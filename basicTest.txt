@@ -1,0 +1,9 @@
+int x;
+int y[10];
+int a, b, c;
+void main(int p, int l, boolean w[])
+begin
+	int hello;
+	boolean wow[100];
+	x = 5;
+end
