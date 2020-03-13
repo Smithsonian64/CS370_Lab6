@@ -58,7 +58,7 @@ void ASTprint(int level, ASTnode *p) {
 						break;
 					default : printf("invalid type");
 				}
-                      		printf(" %s",p->name);
+                      		printf("%s",p->name);
                      		if (p->value > 0)
                         		printf("[%d]",p->value);
                      		printf("\n");
@@ -147,7 +147,8 @@ void ASTprint(int level, ASTnode *p) {
 				break;
 			case EXPR:
 				ASTIndent(level);
-				printf("Expression ");
+				printf("Expression\n");
+				ASTIndent(level);
 				switch(p->operator) {
 					case PLUS:
 						printf("Operator +");
@@ -173,11 +174,19 @@ void ASTprint(int level, ASTnode *p) {
 					case NOTEQUAL:
 						printf("Operator !=");
 						break;
+					case EXPRNOT:
+						printf("Operator !");
+						break;
 					default: printf("unknown operator");
 				}
 				printf("\n");
 				ASTprint(level + 1, p->s1);
 				ASTprint(level + 1, p->s2);
+				break;
+			case EXPRSTMT:
+				ASTIndent(level);
+				printf("Expression Statement\n");
+				ASTprint(level + 1, p->s1);
 				break;
 			case MULTOPTERM:
 				ASTIndent(level);
@@ -206,7 +215,7 @@ void ASTprint(int level, ASTnode *p) {
 				printf("%s\n", p->name);
 				ASTIndent(level);
 				printf("(\n");
-				ASTprint(level, p->s1);
+				ASTprint(level + 1, p->s1);
 				ASTIndent(level);
 				printf(")\n");
 				break;
@@ -220,9 +229,9 @@ void ASTprint(int level, ASTnode *p) {
 				printf("Write \n");
 				ASTprint(level + 1, p->s1);
 				break;
-			case ITERATION:
+			case WHILEBLOCK:
 				ASTIndent(level);
-				printf("Iteration\n");
+				printf("While Block\n");
 				ASTIndent(level);
 				printf("Condition\n");
 				ASTprint(level + 1, p->s1);
@@ -231,11 +240,22 @@ void ASTprint(int level, ASTnode *p) {
 				ASTprint(level + 1, p->s2);
 				break;
 			case FUNRET:
-				ASTIndent(level);
-				printf("return\n");
 				if(p->s1 != NULL) {
 					ASTIndent(level);
+					printf("Return\n");
+					ASTIndent(level);
+					printf("(\n");
 					ASTprint(level + 1, p->s1);
+					ASTIndent(level);
+					printf(")\n");
+				}
+				else {
+					ASTIndent(level);
+					printf("Return\n");
+					ASTIndent(level);
+					printf("(\n");
+					ASTIndent(level);
+					printf(")\n");
 				}
 				break;
 			case IFBLOCK:

@@ -13,12 +13,12 @@
  * Michael Smith
  * March 2020
  */
+
 %{
 #include <stdio.h>
 #include <ctype.h>
+#include <stdlib.h>
 #include "ast.h"
-#include "ast.c"
-#include "lex.yy.c"
 
 int mydebug = 0;
 
@@ -31,6 +31,8 @@ void yyerror (s)
 	exit(1);
 
 }
+
+int yylex(void);
 
 ASTnode * globalTreePointer;
 
@@ -52,7 +54,10 @@ ASTnode * globalTreePointer;
 %type<value> NUM
 %type<string> ID
 %type<node> program decls_list dec var_dec fun_dec var_list params compound_stmt
-param_list param stmt_list local_decs expression_stmt selection_stmt iteration_stmt assignment_stmt return_stmt read_stmt write_stmt stmt expression simple_expression additive_expression term factor call variable args arg_list
+%type<node> param_list param stmt_list local_decs expression_stmt selection_stmt
+%type<node> iteration_stmt assignment_stmt return_stmt read_stmt write_stmt stmt
+%type<node> expression simple_expression additive_expression term factor call
+%type<node> variable args arg_list
 %type<operator> type_spec relop addop multop
 
 
@@ -187,8 +192,7 @@ param		:	type_spec ID
        		;
 
 compound_stmt	:	BEG local_decs stmt_list END
-	      		{
-				
+	      		{		
 				$$ = ASTCreateNode(BLOCK);
 				$$->s1 = $2;
 				$$->s2 = $3;
@@ -212,7 +216,6 @@ stmt_list	:	/*nothing*/
 			}
 	  	|	stmt stmt_list
 			{
-				
 				$$ = $1;
 				$$->next = $2;
 			}
@@ -283,7 +286,7 @@ selection_stmt	:	IF expression THEN stmt
 
 iteration_stmt	:	WHILE expression DO stmt
 	       		{
-				$$ = ASTCreateNode(ITERATION);
+				$$ = ASTCreateNode(WHILEBLOCK);
 				$$->s1 = $2;
 				$$->s2 = $4;
 			}
@@ -346,7 +349,7 @@ simple_expression	:	additive_expression
 		  		{
 					$$ = $1;
 				}
-		  	|	additive_expression relop additive_expression
+		  	|	simple_expression relop additive_expression
 				{
 					$$ = ASTCreateNode(EXPR);
 					$$->s1 = $1;
@@ -385,7 +388,7 @@ additive_expression	:	term
 		    		{
 					$$ = $1;
 				}
-			|	term addop additive_expression
+			|	additive_expression addop term
 				{
 					$$ = ASTCreateNode(EXPR);
 					$$->s1 = $1;

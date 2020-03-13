@@ -10,16 +10,11 @@
 all:	lab6
 
 lab6:	y.tab.c
-	gcc y.tab.c -o lab6
+	gcc lex.yy.c y.tab.c ast.c -o lab6
 
-y.tab.c:check
-	lex lab6.l
+y.tab.c:clean
 	yacc -d lab6.y
-
-check:	clean
-	gcc ast.h
-	rm ast.h.gch
-	rm -f a.out
+	lex lab6.l
 
 clean:
 	rm -f y.tab.c y.tab.h
