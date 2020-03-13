@@ -1,4 +1,4 @@
 int main(void)
 begin
-x = 1 * 2;
+	write X[1 + 3];
 end

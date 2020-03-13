@@ -1,19 +1,18 @@
 /*
-The yacc file reads tokens taken from lex and parses them according to the
-ALGOL-C grammar structure. All constants will be emitted through stderr and if
-there is an error it will be emmitted through stderr as well as the line number.
-
-This yacc routine will exit as soon as an error is encountered.
-
-ALGOL-C ignores whitespaces and newlines so if there is a lot of empty lines to
-to space out a program line counts may be inaccurate for errors. for example, a mispelled END token will be parsed as an ID and the routine will not detect an
-error until, most likely, the next token, even if it is several empty newlines
-away. See test.al for an example. The error is on line 10 but the routine will
-not emit an error until line 12.
-
-Michael Smith
-March 2020
-*/
+ * This yacc routine takes tokens from lex and parses them according to the
+ * ALGOL-C language. It takes semantic action depending on syntax recieved.
+ * The semantic actions taken are actions to create the nodes of an abstract
+ * syntax tree. When parsing is completed the abstact syntax tree is printed.
+ *
+ * If a syntax error is encounterd in the input program then the routine
+ * immediately exits and a line number with the error is emmitted. CAUTION
+ * the line number emmitted is not always the line the error has occured.
+ * Since ALGOL-C ignores whitespace, the error may point the line of first
+ * token after the actual error.
+ *
+ * Michael Smith
+ * March 2020
+ */
 %{
 #include <stdio.h>
 #include <ctype.h>
@@ -29,7 +28,7 @@ void yyerror (s)
 	char *s;
 {
 	fprintf(stderr, "error on line %d: %s\nAborting...\n", line, s);
-	exit(0);
+	exit(1);
 
 }
 
@@ -53,8 +52,8 @@ ASTnode * globalTreePointer;
 %type<value> NUM
 %type<string> ID
 %type<node> program decls_list dec var_dec fun_dec var_list params compound_stmt
-param_list param stmt_list local_decs expression_stmt selection_stmt iteration_stmt assignment_stmt return_stmt read_stmt write_stmt stmt expression simple_expression additive_expression term factor call variable
-%type<operator> type_spec
+param_list param stmt_list local_decs expression_stmt selection_stmt iteration_stmt assignment_stmt return_stmt read_stmt write_stmt stmt expression simple_expression additive_expression term factor call variable args arg_list
+%type<operator> type_spec relop addop multop
 
 
 %%
@@ -96,8 +95,7 @@ var_dec		:	type_spec var_list ';'
 					p->operator = $1;
 					p = p->s1;
 				}
-				$$ = $2;
-				
+				$$ = $2;	
 			}
 	 	;
 
@@ -107,8 +105,7 @@ var_list	:	ID
 				$$->name = $1;
 			}
 	 	|	ID '[' NUM ']'
-			{
-				
+			{	
 				$$ = ASTCreateNode(VARDEC);
 				$$->name = $1;
 				$$->value = $3;
@@ -210,8 +207,7 @@ local_decs	:	/*nothing*/
 		;
 
 stmt_list	:	/*nothing*/
-	  		{
-				
+	  		{	
 				$$ = NULL;
 			}
 	  	|	stmt stmt_list
@@ -269,46 +265,60 @@ expression_stmt	:	expression ';'
 
 selection_stmt	:	IF expression THEN stmt
 	       		{
-				$$ = NULL;
+				$$ = ASTCreateNode(IFBLOCK);
+				$$->s1 = $2;
+				$$->s2 = ASTCreateNode(IFELSESTMTS);
+				$$->s2->s1 = $4;
+				$$->s2->s2 = NULL; 
 			}
 	       	|	IF expression THEN stmt ELSE stmt
 			{
-				$$ = NULL;
+				$$ = ASTCreateNode(IFBLOCK);
+				$$->s1 = $2;
+				$$->s2 = ASTCreateNode(IFELSESTMTS);
+				$$->s2->s1 = $4;
+				$$->s2->s2 = $6;
 			}
 		;
 
 iteration_stmt	:	WHILE expression DO stmt
 	       		{
-				$$ = NULL;
+				$$ = ASTCreateNode(ITERATION);
+				$$->s1 = $2;
+				$$->s2 = $4;
 			}
 	       	;
 
 return_stmt	:	RET ';'
 	    		{
-				$$ = NULL;
+				$$ = ASTCreateNode(FUNRET);
 			}
 	    	|	RET expression ';'
 			{
-				$$ = NULL;
+				$$ = ASTCreateNode(FUNRET);
+				$$->s1 = $2;
 			}
 		;
 
 read_stmt	:	READ variable ';'
 	  		{
-				$$ = NULL;
+				$$ = ASTCreateNode(READSTMT);
+				$$->s1 = $2;
 			}
 	  	;
 
 write_stmt	:	WRITE expression ';'
 	   		{
-				$$ = NULL;
+				$$ = ASTCreateNode(WRITESTMT);
+				$$->s1 = $2;
 			}
 	   	;
 
 assignment_stmt	:	variable '=' simple_expression ';'
 			{
 				$$ = ASTCreateNode(ASSIGN);
-				$$->s1 = $3;
+				$$->s1 = $1;
+				$$->s2 = $3;
 			}
 		;
 
@@ -325,27 +335,50 @@ variable	:	ID
 			}
 	 	|	ID '[' expression ']'
 			{
-				$$ = NULL;
+				$$ = ASTCreateNode(IDENT);
+				$$->name = $1;
+				$$->s1 = $3;
+				$$->value = $3->value;
 			}
 		;
 
 simple_expression	:	additive_expression
 		  		{
-					//printf("hello");
 					$$ = $1;
 				}
 		  	|	additive_expression relop additive_expression
 				{
-					$$ = NULL;
+					$$ = ASTCreateNode(EXPR);
+					$$->s1 = $1;
+					$$->s2 = $3;
+					$$->operator = $2;
 				}
 			;
 
 relop		:	LE
+       			{
+				$$ = LESSTHANOREQUAL;
+			}
        		|	LT
+			{
+				$$ = LESSTHAN;
+			}
 		|	GT
+			{
+				$$ = GREATERTHAN;
+			}
 		|	GE
+			{
+				$$ = GREATERTHANOREQUAL;
+			}
 		|	EQ
+			{
+				$$ = EQUAL;
+			}				
 		|	NE
+			{
+				$$ = NOTEQUAL;
+			}
 		;
 
 additive_expression	:	term
@@ -354,28 +387,52 @@ additive_expression	:	term
 				}
 			|	term addop additive_expression
 				{
-					$$ = NULL;
+					$$ = ASTCreateNode(EXPR);
+					$$->s1 = $1;
+					$$->s2 = $3;
+					$$->operator = $2;
 				}
 			;
 
 addop		:	'+'
+       			{
+				$$ = PLUS;
+			}
        		|	'-'
+			{
+				$$ = MINUS;
+			}
 		;
 
 term		:	factor
       			{
 				$$ = $1;
 			}
-		|	factor multop term
+		|	term multop factor
 			{
-				$$ = NULL;
+				$$ = ASTCreateNode(MULTOPTERM);
+				$$->s1 = $1;
+				$$->s2 = $3;
+				$$->operator = $2;
 			}
 		;
 
 multop		:	'*'
+			{
+				$$ = MULT;
+			}
 		|	'/'
+			{
+				$$ = DIV;
+			}
 		|	AND
+			{
+				$$ = EXPRAND;
+			}
 		|	OR
+			{
+				$$ = EXPROR;
+			}
 		;
 
 factor		:	'(' expression	')'
@@ -389,37 +446,57 @@ factor		:	'(' expression	')'
 			}
 		|	variable
 			{
-				$$ = NULL;
+				$$ = $1;
 			}
 		|	call
 			{
-				$$ = NULL;
+				$$ = $1;
 			}
 		|	TRUE
 			{
-				$$ = NULL;
+				$$ = ASTCreateNode(NUMBER);
+				$$->value = 1;
 			}
 		|	FALSE
 			{
-				$$ = NULL;
+				$$ = ASTCreateNode(NUMBER);
+				$$->value = 0;
 			}
 		|	NOT factor
 			{
-				$$ = NULL;
+				$$ = ASTCreateNode(EXPR);
+				$$->operator = EXPRNOT;
+				$$->s1 = $2;
 			}
 		;
 
 call		:	ID '(' args ')'
 			{
-				$$ = NULL;
+				$$ = ASTCreateNode(CALL);
+				$$->s1 = $3;
+				$$->name = $1;
 			}      
 		;
 
 args		:	arg_list
+      			{
+				$$ = $1;
+			}
+		|	/*empty*/
+			{
+				$$ = NULL;
+			}
 		;
 
 arg_list	:	expression
+	 		{
+				$$ = $1;
+			}
 	 	|	expression ',' arg_list
+			{
+				$$ = $1;
+				$$->next = $3;
+			}
 		;
 
 %%		

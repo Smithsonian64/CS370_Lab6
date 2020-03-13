@@ -1,11 +1,12 @@
 /*
-This lex file takes in input and gives token and characters related to the
-ALGOL-C grammar structure. I also keeps track of the line number.
-
-Michael Smith
-March 2020
-
+ * This lex file takes in input and gives tokens and characters related to the
+ * ALGOL-C grammar structure to yacc. It also keeps track of the line number.
+ *
+ * Michael Smith
+ * March 2020
+ *
 */
+
 %{
 
 int debug = 0;
@@ -22,20 +23,17 @@ int line = 1;
 
 int			{
 				if(debug) printf("found \"type spec: int\"\n");
-				//yylval.operator = INTTYPE;
 				return(INT);
 				
 			}
 
 void			{
 				if(debug) printf("found \"void\"\n");
-				//yylval.operator = VOIDTYPE;
 				return(VOID);
 			}
 
 boolean			{
 				if(debug) printf("found \"boolean\"\n");
-				//yylval.operator = BOOLTYPE;
 				return(BOOLEAN);
 			}
 
@@ -156,7 +154,7 @@ not			{
 				return(NUM);
 			}
 
-[\[\]\=\-+&|/\,\;\(\)]	{
+[\[\]\=\-+&|/\,;\(\)*]	{
 				if(debug) printf("found \"char: %s\"\n", yytext);
 				return(*yytext);
 			}

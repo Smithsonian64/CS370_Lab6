@@ -1,10 +1,10 @@
 #Lab6
 #Michael Smith
 #March 2020
-#Lab6 can parse either by user input or an input file
-#ALGOL-C grammar and return any errors
-#input: user input or input file
-#output: indication of any errors
+#Lab6 parses by an input file and prints the abstract syntax tree according to
+#ALGOL-C grammar and return the line number of the first error
+#input: input file
+#output: Abstract syntax tree and the first of if any errors
 #
 
 all:	lab6
