@@ -522,7 +522,7 @@ char *yytext_ptr;
  * ALGOL-C grammar structure to yacc. It also keeps track of the line number.
  *
  * Michael Smith
- * March 2020
+ * April 2020
  *
 */
 #line 11 "lab6.l"

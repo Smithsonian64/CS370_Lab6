@@ -11,8 +11,12 @@
  *
  * ASTIndent() helps indent in ASTprint()
  *
+ * When the AST is printed multops are executed viertically in the the tree and
+ * and addops are executed laterally in the tree. This is to allow for the 
+ * the order of operations. 
+ *
  * Michael Smith 
- * March 2020
+ * April 2020
  */
 
 #include <stdio.h>

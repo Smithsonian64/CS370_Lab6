@@ -11,7 +11,8 @@
  * a function to create a node defined as ASTCreateNode() and a function
  * ASTIndent is defined to help to print function indent.
  *
- * Michael Smith 2020
+ * Michael Smith 
+ * April 2020
  */
 
 #ifndef AST_H

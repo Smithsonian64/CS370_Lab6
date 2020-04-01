@@ -1,6 +1,6 @@
 #Lab6
 #Michael Smith
-#March 2020
+#April 2020
 #Lab6 parses by an input file and prints the abstract syntax tree according to
 #ALGOL-C grammar and return the line number of the first error
 #input: input file
