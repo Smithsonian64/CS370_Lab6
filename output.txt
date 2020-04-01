@@ -1,0 +1,134 @@
+Abstract Syntax Tree:
+
+Variable VOID x
+Variable INT x[100]
+Function INT main
+(
+)
+ Block statment
+  Variable INT x
+  Block statment
+   Variable INT y
+   While Block
+   Condition
+    Expression
+    Operator <=
+     Expression
+     Operator +
+      Identifier x
+      Operator /
+       Number 5
+       Number 2
+     Expression
+     Operator -
+      Expression
+      Operator +
+       Number 2
+       Identifier z
+      Number 5
+   Statements
+    If Block
+    Condition
+     Expression
+     Operator >=
+      Expression
+      Operator -
+       Identifier h
+       Number 2
+      Expression
+      Operator -
+       Number 3
+       Number 2
+    Statement
+     Read 
+      Identifier x
+      Array Reference
+      [
+       Number 100
+      ]
+    Else Block
+     Write 
+      Expression
+      Operator +
+       Identifier x
+       Array Reference
+       [
+        Number 100
+       ]
+       Number 200
+   Expression Statement
+    Call f
+    (
+     Expression
+     Operator +
+      Number 3
+      Identifier x
+      Array Reference
+      [
+       Identifier x
+       Array Reference
+       [
+        Number 100
+       ]
+      ]
+     Expression
+     Operator +
+      Identifier bar
+      Number 200
+     Number 20
+    )
+   Return
+   (
+   )
+   Return
+   (
+    Expression
+    Operator +
+     Expression
+     Operator +
+      Identifier x
+      Number 5
+     Number 7
+   )
+   If Block
+   Condition
+    Expression
+    Operator >
+     Expression
+     Operator +
+      Identifier x
+      Number 10
+     Operator *
+      Number 10
+      Number 20
+   Statement
+    Assignment statment
+     Identifier x
+      Expression
+      Operator !=
+       Identifier x
+       Number 10
+   Write 
+    Expression
+    Operator !
+     Operator or
+      Operator and
+       Number 3
+       Number 5
+      Operator and
+       Number 1
+       Expression
+       Operator !
+        Number 0
+
+
+
+Function VOID f
+(
+ Parameter INT x
+ Parameter INT y
+ Parameter VOID z
+)
+ Block statment
+
+
