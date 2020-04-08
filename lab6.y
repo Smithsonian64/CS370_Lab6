@@ -262,7 +262,7 @@ expression_stmt	:	expression ';'
 			}
 		|	';'
 			{
-				$$ = NULL;
+				$$ = ASTCreateNode(EXPRSTMT);
 			}
 		;
 
@@ -493,11 +493,13 @@ args		:	arg_list
 
 arg_list	:	expression
 	 		{
-				$$ = $1;
+				$$ = ASTCreateNode(ARG);
+				$$->s1 = $1;
 			}
 	 	|	expression ',' arg_list
 			{
-				$$ = $1;
+				$$ = ASTCreateNode(ARG);
+				$$->s1 = $1;
 				$$->next = $3;
 			}
 		;

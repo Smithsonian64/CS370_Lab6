@@ -511,7 +511,7 @@ static const yytype_uint16 yyrline[] =
      295,   299,   306,   313,   320,   328,   334,   339,   348,   352,
      361,   365,   369,   373,   377,   381,   387,   391,   400,   404,
      410,   414,   423,   427,   431,   435,   441,   445,   450,   454,
-     458,   463,   468,   476,   484,   489,   494,   498
+     458,   463,   468,   476,   484,   489,   494,   499
 };
 #endif
 
@@ -1684,7 +1684,7 @@ yyreduce:
   case 36:
 #line 264 "lab6.y"
     {
-				(yyval.node) = NULL;
+				(yyval.node) = ASTCreateNode(EXPRSTMT);
 			}
 #line 1690 "y.tab.c"
     break;
@@ -2039,22 +2039,24 @@ yyreduce:
   case 76:
 #line 495 "lab6.y"
     {
-				(yyval.node) = (yyvsp[0].node);
+				(yyval.node) = ASTCreateNode(ARG);
+				(yyval.node)->s1 = (yyvsp[0].node);
 			}
-#line 2045 "y.tab.c"
+#line 2046 "y.tab.c"
     break;
 
   case 77:
-#line 499 "lab6.y"
+#line 500 "lab6.y"
     {
-				(yyval.node) = (yyvsp[-2].node);
+				(yyval.node) = ASTCreateNode(ARG);
+				(yyval.node)->s1 = (yyvsp[-2].node);
 				(yyval.node)->next = (yyvsp[0].node);
 			}
-#line 2054 "y.tab.c"
+#line 2056 "y.tab.c"
     break;
 
 
-#line 2058 "y.tab.c"
+#line 2060 "y.tab.c"
 
       default: break;
     }
@@ -2286,7 +2288,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 505 "lab6.y"
+#line 507 "lab6.y"
 		
 
 int main(void) {

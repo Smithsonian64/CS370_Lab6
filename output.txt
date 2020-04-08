@@ -59,23 +59,26 @@ Function INT main
    Expression Statement
     Call f
     (
-     Expression
-     Operator +
-      Number 3
-      Identifier x
-      Array Reference
-      [
+     Argument
+      Expression
+      Operator +
+       Number 3
        Identifier x
        Array Reference
        [
-        Number 100
+        Identifier x
+        Array Reference
+        [
+         Number 100
+        ]
        ]
-      ]
-     Expression
-     Operator +
-      Identifier bar
-      Number 200
-     Number 20
+     Argument
+      Expression
+      Operator +
+       Identifier bar
+       Number 200
+     Argument
+      Number 20
     )
    Return
    (
@@ -110,15 +113,15 @@ Function INT main
        Number 10
    Write 
     Expression
-    Operator !
+    Operator not
      Operator or
-      Operator and
+      Opearator and
        Number 3
        Number 5
-      Operator and
+      Opearator and
        Number 1
        Expression
-       Operator !
+       Operator not
         Number 0
 
 

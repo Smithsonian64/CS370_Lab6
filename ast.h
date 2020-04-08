@@ -39,7 +39,8 @@ enum ASTtype {
 	WHILEBLOCK,
 	FUNRET,
 	IFBLOCK,
-	IFELSESTMTS
+	IFELSESTMTS,
+	ARG
 
 };
 
@@ -75,6 +76,8 @@ typedef struct ASTnode {
 } ASTnode;
 
 ASTnode *  ASTCreateNode(enum ASTtype targetType);
+
+void ASTprintOperator(enum OPERATORS type);
 
 void ASTprint(int level, ASTnode *p);
 

@@ -41,6 +41,61 @@ void ASTIndent(int x) {
 
 }
 
+void ASTprintOperator(enum OPERATORS type) {
+	switch (type) {
+		case VOIDTYPE:
+			printf("VOID ");
+			break;
+		case INTTYPE:
+			printf("INT ");
+			break;
+		case BOOLTYPE:
+			printf("BOOLEAN ");
+			break;
+		case PLUS:
+			printf("Operator +");
+			break;
+		case MINUS:
+			printf("Operator -");
+			break;
+		case LESSTHAN:
+			printf("Operator <");
+			break;
+		case LESSTHANOREQUAL:
+			printf("Operator <=");
+			break;
+		case GREATERTHAN:
+			printf("Operator >");
+			break;
+		case GREATERTHANOREQUAL:
+			printf("Operator >=");
+			break;
+		case EQUAL:
+			printf("Operator ==");
+			break;
+		case NOTEQUAL:
+			printf("Operator !=");
+			break;
+		case MULT:
+			printf("Operator *");
+			break;
+		case DIV:
+			printf("Operator /");
+			break;
+		case EXPRAND:
+			printf("Opearator and");
+			break;
+		case EXPROR:
+			printf("Operator or");
+			break;
+		case EXPRNOT:
+			printf("Operator not");
+			break;
+		default:
+			printf("Unknown Operator");
+	}
+}
+
 void ASTprint(int level, ASTnode *p) {
 
 	int i;
@@ -50,19 +105,8 @@ void ASTprint(int level, ASTnode *p) {
 			case VARDEC :
 				ASTIndent(level);
 				printf("Variable ");
-				switch (p-> operator) {
-					case VOIDTYPE : 
-						printf("VOID ");
-						break;
-					case INTTYPE : 
-						printf("INT ");
-						break;
-					case BOOLTYPE : 
-						printf("BOOLEAN ");
-						break;
-					default : printf("invalid type");
-				}
-                      		printf("%s",p->name);
+                      		ASTprintOperator(p->operator);
+				printf("%s",p->name);
                      		if (p->value > 0)
                         		printf("[%d]",p->value);
                      		printf("\n");
@@ -72,18 +116,7 @@ void ASTprint(int level, ASTnode *p) {
 			case FUNDEC :	
 				ASTIndent(level);
 				printf("Function ");
-				switch (p->operator) {
-					case VOIDTYPE : 
-						printf("VOID ");
-						break;
-					case INTTYPE : 
-						printf("INT ");
-						break;
-					case BOOLTYPE : 
-						printf("BOOLEAN ");
-						break;
-					default : printf("invalid type");
-				}
+				ASTprintOperator(p->operator);
 				printf("%s", p->name);
 				if(p->s1 != NULL) {
 					printf("\n(\n");
@@ -101,18 +134,7 @@ void ASTprint(int level, ASTnode *p) {
 			case PARAM :	
 				ASTIndent(level);
 				printf("Parameter ");
-				switch (p->operator) {
-					case VOIDTYPE : 
-						printf("VOID ");
-						break;
-					case INTTYPE : 
-						printf("INT ");
-						break;
-					case BOOLTYPE : 
-						printf("BOOLEAN ");
-						break;
-					default : printf("invalid type");
-				}	
+				ASTprintOperator(p->operator);
 				printf("%s", p->name);
 				if(p->value == -1) printf("[]");
 				printf("\n");
@@ -153,36 +175,7 @@ void ASTprint(int level, ASTnode *p) {
 				ASTIndent(level);
 				printf("Expression\n");
 				ASTIndent(level);
-				switch(p->operator) {
-					case PLUS:
-						printf("Operator +");
-						break;
-					case MINUS:
-						printf("Operator -");
-						break;
-					case LESSTHAN:
-						printf("Operator <");
-						break;
-					case LESSTHANOREQUAL:
-						printf("Operator <=");
-						break;
-					case GREATERTHAN:
-						printf("Operator >");
-						break;
-					case GREATERTHANOREQUAL:
-						printf("Operator >=");
-						break;
-					case EQUAL:
-						printf("Operator ==");
-						break;
-					case NOTEQUAL:
-						printf("Operator !=");
-						break;
-					case EXPRNOT:
-						printf("Operator !");
-						break;
-					default: printf("unknown operator");
-				}
+				ASTprintOperator(p->operator);
 				printf("\n");
 				ASTprint(level + 1, p->s1);
 				ASTprint(level + 1, p->s2);
@@ -194,21 +187,7 @@ void ASTprint(int level, ASTnode *p) {
 				break;
 			case MULTOPTERM:
 				ASTIndent(level);
-				switch(p->operator) {
-					case MULT:
-						printf("Operator *");
-						break;
-					case DIV:
-						printf("Operator /");
-						break;
-					case EXPRAND:
-						printf("Operator and");
-						break;
-					case EXPROR:
-						printf("Operator or");
-						break;
-					default: printf("unknown operator");
-				}
+				ASTprintOperator(p->operator);
 				printf("\n");
 				ASTprint(level + 1, p->s1);
 			   	ASTprint(level + 1, p->s2);
@@ -279,6 +258,11 @@ void ASTprint(int level, ASTnode *p) {
 					printf("Else Block\n");
 					ASTprint(level + 1, p->s2);	
 				}
+				break;
+			case ARG:
+				ASTIndent(level);
+				printf("Argument\n");
+				ASTprint(level + 1, p->s1);
 				break;
 			default : printf("Unknown type\n");
 		}
